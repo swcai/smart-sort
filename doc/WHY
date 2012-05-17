@@ -1,0 +1,5 @@
+Basic sort algorithm is to list the items in order, with the key value. For example
+sort the results by access time increasingly, or to sort the results by size descently.
+
+Some sort algorithms are use the combination key. For example, sort the results by
+access time and size. In this example, time and size are two independent factors for the results.
