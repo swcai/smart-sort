@@ -27,7 +27,7 @@ public class ItemBasedCollaborativeFilter extends CollaborativeFilter {
         // x or y is zero.
         for (int i = 1; i < rows; ++i)
             if (!userItemRow.get(i)) {
-                double value = 0d;
+                double value = 0.0d;
                 for (int j = 1; j < rows; ++j)
                     value += mMovieMoviesMatrix[i][j]
                             * (userItemRow.get(j) ? 1.0d : 0.0d);

@@ -10,12 +10,12 @@ import java.util.BitSet;
  * 
  */
 public class UserBasedCollaborativeFilter extends CollaborativeFilter {
-    private double[][] mUserUsersMatrix;
+    private BitSet[] mFriendList;
     
     private UserBasedCollaborativeFilter() {
         super();
         System.out.println("timestamp #5:" + System.currentTimeMillis());
-        buildUserUsersMatrix();
+        buildFriendList(10);
         System.out.println("timestamp #6:" + System.currentTimeMillis());
     }
 
@@ -36,17 +36,37 @@ public class UserBasedCollaborativeFilter extends CollaborativeFilter {
             if (rowb.get(pos))
                 count++;
         /*
-         * // skip 0 anyway, bit #0 always false for (int i=1;
+         * skip 0 anyway, bit #0 always false for (int i=1;
          * i<Math.max(rowa.length(), rowb.length()); ++i) if (rowa.get(i) &&
          * rowb.get(i)) count ++;
          */
         return count / res;
     }
 
-    private void buildUserUsersMatrix() {
+    private int[] topN(double[] row, int n) {
+        return new int[0];
+    }
+    
+    private void buildFriendList(int k) {
         int rows = mUsers.length + 1;
-        mUserUsersMatrix = new double[rows][rows];
+        double[][] matrix = new double[rows][rows];
         for (int i=1; i < rows; ++i)
-            mUserUsersMatrix[i] = new double[rows];
+            matrix[i] = new double[rows];
+        
+        /* If similarity function is symmetric, we could improve the performance
+         * twice by calculating the diag.
+         */
+        for (int i = 1; i < rows; ++i)
+            for (int j = 1; j < rows; ++j)
+                if (i != j)
+                    matrix[i][j] = similarity(mUserMoviesMatrix[i],
+                            mUserMoviesMatrix[j]);
+        
+        mFriendList = new BitSet[rows];
+        for (int i=1; i<rows; ++i) {
+            mFriendList[i] = new BitSet();
+            for (int pos : topN(matrix[i], k))
+                mFriendList[i].set(pos);
+        }
     }
 }
