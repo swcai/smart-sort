@@ -1,79 +1,68 @@
 package com.stanleycai.smartsort.collaborative;
 
-import java.util.HashMap;
-
-import com.stanleycai.utils.StringUtils;
+import java.io.BufferedReader;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.ArrayList;
 
 public class User {
-    String mName;
-    /*
-     * Assume the preference is in the range from -1.0d to 1.0d -1.0d means very
-     * not preferred 1.0d means very preferred So, the default value 0.0d is the
-     * mid point.
-     */
-    HashMap<String, Double> mPreferences;
+    private int mId;
+    private int mAge;
+    private char mGender;
+    private String mOccupation;
+    private String mZip;
 
-    public User(String name) {
-        mName = name;
-        mPreferences = new HashMap<String, Double>();
+    private User(int id, int age, char gender, String occupation, String zip) {
+        mId = id;
+        mAge = age;
+        mGender = gender;
+        mOccupation = occupation;
+        mZip = zip;
     }
 
-    public User(String name, User user) {
-        mName = name;
-        mPreferences = new HashMap<String, Double>();
-        for (String tag : user.getAllPreferences().keySet())
-            mPreferences.put(tag, user.getPreference(tag));
+    public int getId() {
+        return mId;
     }
 
-    /*
-     * This is a simple implementation for this algorithm. Maybe too simplified.
-     * 
-     * Overall preferences = Sum(preferences(tag))
-     * 
-     * - No social information
-     * - Content-based
-     */
-    public double eval(Item item) {
-        double res = 0.0d;
-        for (String tag : item.getTags())
-            res += getPreference(tag);
-        return res;
-    }
-    
-    public void setPreference(String tag, double pref) {
-        mPreferences.put(tag, (pref > 1.0d ? 1.0d : ((pref < -1.0d) ? -1.0d
-                : pref)));
+    public int getAge() {
+        return mAge;
     }
 
-    public double getPreference(String tag) {
-        if (!mPreferences.containsKey(tag))
-            mPreferences.put(tag, 0.0d); // Need tune this value.
-        return mPreferences.get(tag);
+    public char getGender() {
+        return mGender;
     }
 
-    public HashMap<String, Double> getAllPreferences() {
-        return mPreferences;
+    public String getOccupation() {
+        return mOccupation;
     }
 
-    private static final double delta = 0.01d;
-
-    public void update(Item item, boolean feedback) {
-        double d = feedback ? delta : -delta;
-        for (String tag : item.getTags())
-            setPreference(tag, getPreference(tag) + d);
+    public String getZip() {
+        return mZip;
     }
 
     public String toString() {
-        StringBuffer buf = new StringBuffer();
-        buf.append(mName);
-        buf.append(" :{");
-        String[] s = new String[mPreferences.size()];
-        int index = 0;
-        for (String tag : mPreferences.keySet())
-            s[index++] = String.format("\"%s\": %4.4f", tag,
-                    mPreferences.get(tag));
-        buf.append(StringUtils.join(", ", s));
-        buf.append("}");
-        return buf.toString();
+        return String.format("[id:%d age:%d gender:%c occupation:%s zip %s]",
+                mId, mAge, mGender, mOccupation, mZip);
+    }
+
+    public static User[] loadUsersFromFile(String userFilename) {
+        ArrayList<User> users = new ArrayList<User>();
+        try {
+            BufferedReader reader = new BufferedReader(new InputStreamReader(
+                    new FileInputStream(userFilename)));
+            String line;
+            while ((line = reader.readLine()) != null) {
+                String[] fields = line.split("\\|");
+                users.add(new User(Integer.valueOf(fields[0]), Integer
+                        .valueOf(fields[1]), fields[2].charAt(0), fields[3],
+                        fields[4]));
+            }
+            reader.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return users.toArray(new User[0]);
     }
 }
