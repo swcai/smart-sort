@@ -16,13 +16,12 @@ public class ItemBasedCollaborativeFilterTest {
     @Test
     public void testEstimate() {
         User[] users = User.loadUsersFromFile("dat/ml-100k/u.user");
-
+        ItemBasedCollaborativeFilter cfilter = new ItemBasedCollaborativeFilter();
         try {
             BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(
                     new FileOutputStream("out/u1.output")));
             for (int i = 0; i < users.length; ++i) {
-                double[] res = ItemBasedCollaborativeFilter.getInstance().filter(
-                        users[i]);
+                double[] res = cfilter.estimate(users[i]);
                 writer.write(Integer.toString(users[i].getId()) + ":"
                         + Arrays.toString(res) + "\n");
             }
