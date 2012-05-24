@@ -2,6 +2,8 @@ package com.stanleycai.smartsort.collaborative;
 
 import java.util.BitSet;
 
+import com.stanleycai.utils.TopN;
+
 /* CF-based recommendation
  * - Item-based
  * 
@@ -12,20 +14,33 @@ import java.util.BitSet;
 public class UserBasedCollaborativeFilter extends CollaborativeFilter {
     private BitSet[] mFriendList;
     
-    private UserBasedCollaborativeFilter() {
+    public UserBasedCollaborativeFilter() {
         super();
         System.out.println("timestamp #5:" + System.currentTimeMillis());
-        buildFriendList(10);
+        buildFriendList(20);
         System.out.println("timestamp #6:" + System.currentTimeMillis());
     }
 
-    public double[] estimate(User user) {
-        return new double[0];
+    public int[] estimate(User user, int k) {
+        double[] votes = new double[mMovies.length + 1];
+        int p = 0;
+        while (-1 != (p = mFriendList[user.getId()].nextSetBit(p+1))) {
+            int q = 0;
+            while (-1 != (q = mUserMoviesMatrix[p].nextSetBit(q+1)))
+                votes[q] += 1.0d;
+        }
+        
+        // remove the movies user has watched
+        p = 0;
+        while (-1 != (p = mUserMoviesMatrix[user.getId()].nextSetBit(p+1)))
+            votes[p] = 0.0d; 
+        
+        return TopN.apply(votes, k);
     }
 
     /* Cosine-based Similarity */
     private double similarity(BitSet rowa, BitSet rowb) {
-        double res = rowa.cardinality() * rowb.cardinality();
+        double res = Math.sqrt(rowa.cardinality()) * Math.sqrt(rowb.cardinality());
         if (res == 0.0d)
             return 0.0d;
 
@@ -43,10 +58,6 @@ public class UserBasedCollaborativeFilter extends CollaborativeFilter {
         return count / res;
     }
 
-    private int[] topN(double[] row, int n) {
-        return new int[0];
-    }
-    
     private void buildFriendList(int k) {
         int rows = mUsers.length + 1;
         double[][] matrix = new double[rows][rows];
@@ -65,7 +76,7 @@ public class UserBasedCollaborativeFilter extends CollaborativeFilter {
         mFriendList = new BitSet[rows];
         for (int i=1; i<rows; ++i) {
             mFriendList[i] = new BitSet();
-            for (int pos : topN(matrix[i], k))
+            for (int pos : TopN.apply(matrix[i], k))
                 mFriendList[i].set(pos);
         }
     }

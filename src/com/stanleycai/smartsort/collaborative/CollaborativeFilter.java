@@ -33,7 +33,7 @@ public abstract class CollaborativeFilter {
         loadMovieUsersMatrix();
     }
 
-    public abstract double[] estimate(User user);
+    public abstract int[] estimate(User user, int k);
     
     private void loadMovieUsersMatrix() {
         int rows = mMovies.length + 1;

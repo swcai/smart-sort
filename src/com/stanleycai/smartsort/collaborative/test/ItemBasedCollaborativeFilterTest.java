@@ -21,7 +21,7 @@ public class ItemBasedCollaborativeFilterTest {
             BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(
                     new FileOutputStream("out/u1.output")));
             for (int i = 0; i < users.length; ++i) {
-                double[] res = cfilter.estimate(users[i]);
+                int[] res = cfilter.estimate(users[i], 3);
                 writer.write(Integer.toString(users[i].getId()) + ":"
                         + Arrays.toString(res) + "\n");
             }

@@ -1,13 +1,13 @@
-package com.stanleycai.smartsort.utils;
+package com.stanleycai.utils;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 
-class TopN {
+public class TopN {
     private static double[] array;
     private static int length;
     private static Integer[] indexArray;
-    private static int[] apply(double[] arr, int k) {
+    public static int[] apply(double[] arr, int k) {
         array = arr;
         ArrayList<Integer> list = new ArrayList<Integer>();
         for (int i=0; i<arr.length; ++i)

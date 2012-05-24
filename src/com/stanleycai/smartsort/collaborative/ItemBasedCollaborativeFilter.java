@@ -2,6 +2,8 @@ package com.stanleycai.smartsort.collaborative;
 
 import java.util.BitSet;
 
+import com.stanleycai.utils.TopN;
+
 /* CF-based recommendation
  * - Item-based
  * 
@@ -19,7 +21,7 @@ public class ItemBasedCollaborativeFilter extends CollaborativeFilter {
         System.out.println("timestamp #6:" + System.currentTimeMillis());
     }
 
-    public double[] estimate(User user) {
+    public int[] estimate(User user, int k) {
         int rows = mMovies.length + 1;
         double[] res = new double[rows];
         BitSet userItemRow = mUserMoviesMatrix[user.getId()];
@@ -34,12 +36,12 @@ public class ItemBasedCollaborativeFilter extends CollaborativeFilter {
                 res[i] = value;
             }
 
-        return res;
+        return TopN.apply(res, k);
     }
 
     /* Cosine-based Similarity */
     private double similarity(BitSet rowa, BitSet rowb) {
-        double res = rowa.cardinality() * rowb.cardinality();
+        double res = Math.sqrt(rowa.cardinality()) * Math.sqrt(rowb.cardinality());
         if (res == 0.0d)
             return 0.0d;
 
