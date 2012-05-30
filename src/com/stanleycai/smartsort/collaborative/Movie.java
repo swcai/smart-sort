@@ -60,7 +60,7 @@ public class Movie {
                     new FileInputStream(itemFilename)));
             String line;
             while ((line = reader.readLine()) != null) {
-                String[] fields = line.split("\\|");
+                String[] fields = line.split("\\|"); // stupid Java regex
                 movies.add(new Movie(Integer.valueOf(fields[0]), fields[1],
                         fields[2], fields[3], fields[4], Arrays.copyOfRange(
                                 fields, 5, fields.length - 5)));

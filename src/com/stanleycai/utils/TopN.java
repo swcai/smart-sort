@@ -3,11 +3,19 @@ package com.stanleycai.utils;
 import java.util.ArrayList;
 import java.util.Arrays;
 
+/*
+ * Move the implementation to non-static functions
+ * 
+ * TopN algorithm is a sort problem researched by Donald. Here I use heap-based
+ * implementation, instead of so-called tournament algorithm.
+ * 
+ * http://en.wikipedia.org/wiki/Selection_algorithm
+ */
 public class TopN {
-    private static double[] array;
-    private static int length;
-    private static Integer[] indexArray;
-    public static int[] apply(double[] arr, int k) {
+    private double[] array;
+    private int length;
+    private Integer[] indexArray;
+    public int[] apply(double[] arr, int k) {
         array = arr;
         ArrayList<Integer> list = new ArrayList<Integer>();
         for (int i=0; i<arr.length; ++i)
@@ -30,12 +38,12 @@ public class TopN {
         return res;
     }
 
-    private static void buildheap() {
+    private void buildheap() {
         for(int v=length/2-1; v >= 0; v--)
             downheap(v);
     }
 
-    private static void downheap(int v) {
+    private void downheap(int v) {
         int w = 2*v+1;
         while(w < length) {
             if ((w+1 < length) && (array[indexArray[w+1]] > array[indexArray[w]]))
@@ -50,7 +58,7 @@ public class TopN {
         }
     }
 
-    private static void exchange(int i, int j) {
+    private void exchange(int i, int j) {
         int t = indexArray[i];
         indexArray[i] = indexArray[j];
         indexArray[j] = t;

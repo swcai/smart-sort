@@ -53,7 +53,7 @@ public class User {
                     new FileInputStream(userFilename)));
             String line;
             while ((line = reader.readLine()) != null) {
-                String[] fields = line.split("\\|");
+                String[] fields = line.split("\\|"); // stupid Java regex
                 users.add(new User(Integer.valueOf(fields[0]), Integer
                         .valueOf(fields[1]), fields[2].charAt(0), fields[3],
                         fields[4]));

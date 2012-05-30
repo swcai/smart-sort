@@ -12,12 +12,14 @@ import com.stanleycai.utils.TopN;
  * 
  */
 public class UserBasedCollaborativeFilter extends CollaborativeFilter {
+    private static final int NUMOFFRIENDS = 20;
+    
     private BitSet[] mFriendList;
     
     public UserBasedCollaborativeFilter() {
         super();
         System.out.println("timestamp #5:" + System.currentTimeMillis());
-        buildFriendList(20);
+        buildFriendList(NUMOFFRIENDS);
         System.out.println("timestamp #6:" + System.currentTimeMillis());
     }
 
@@ -35,7 +37,7 @@ public class UserBasedCollaborativeFilter extends CollaborativeFilter {
         while (-1 != (p = mUserMoviesMatrix[user.getId()].nextSetBit(p+1)))
             votes[p] = 0.0d; 
         
-        return TopN.apply(votes, k);
+        return new TopN().apply(votes, k);
     }
 
     /* Cosine-based Similarity */
@@ -76,7 +78,7 @@ public class UserBasedCollaborativeFilter extends CollaborativeFilter {
         mFriendList = new BitSet[rows];
         for (int i=1; i<rows; ++i) {
             mFriendList[i] = new BitSet();
-            for (int pos : TopN.apply(matrix[i], k))
+            for (int pos : new TopN().apply(matrix[i], k))
                 mFriendList[i].set(pos);
         }
     }

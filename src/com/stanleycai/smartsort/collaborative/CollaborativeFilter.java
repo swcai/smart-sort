@@ -12,6 +12,10 @@ import java.util.BitSet;
  * The data used are from movielens.org, so some data structures are designed
  * actually for a movie. :)
  * 
+ * A simplication is I simplified the ratings. In mobile phone, due to the 
+ * limitation of screen size, it is hard to give a 1~5 rate. But "+" or "-" is
+ * possible. All the implementation here used this simplication. We may see
+ * some regressions in the result, but more practical.
  */
 public abstract class CollaborativeFilter {
     private static final String USERFILE = "dat/ml-100k/u.user";
@@ -35,6 +39,13 @@ public abstract class CollaborativeFilter {
 
     public abstract int[] estimate(User user, int k);
     
+    /*
+     * It is possible to merge loadMovieUsersMatrix and loadUserMoviesMatrix.
+     * Yes, it may be a better solution for performance.
+     * 
+     * However here I used two functions to parse a single file, just for 
+     * demonstrating the concept clearly.
+     */
     private void loadMovieUsersMatrix() {
         int rows = mMovies.length + 1;
         mMovieUsersMatrix = new BitSet[rows];

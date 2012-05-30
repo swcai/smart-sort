@@ -36,10 +36,21 @@ public class ItemBasedCollaborativeFilter extends CollaborativeFilter {
                 res[i] = value;
             }
 
-        return TopN.apply(res, k);
+        return new TopN().apply(res, k);
     }
 
-    /* Cosine-based Similarity */
+    /* an implementation of Cosine-based Similarity
+     * 
+     * In CF-based algorithm, there are quite a lot of similarity functions.
+     * - Cosine-based Similarity
+     * - Pearson Correlation Similarity Function
+     * - Bayesian Similarity Function
+     * 
+     * The performance of different similarity function is different case by case
+     * 
+     * Essentially, similarity function is the reason to call the set of
+     * algorithms "Heuristics algorithm".
+     */
     private double similarity(BitSet rowa, BitSet rowb) {
         double res = Math.sqrt(rowa.cardinality()) * Math.sqrt(rowb.cardinality());
         if (res == 0.0d)
